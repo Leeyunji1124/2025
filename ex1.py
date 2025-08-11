@@ -1,2 +1,2 @@
 import streamlit as st
-st.title('윤지')
+st.title('침대야 보고싶어')
