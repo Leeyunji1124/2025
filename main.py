@@ -26,7 +26,7 @@ st.markdown("""
     .stButton button:hover {
         background-color: #495057;
     }
-    .stTextInput label, .stRadio label {
+    .stTextInput label {
         color: #343a40;
         font-weight: bold;
     }
@@ -82,4 +82,4 @@ mbti_descriptions = {
     "INTP": "논리적이고 창의적인 사고를 하며, 이론적인 개념에 관심이 많습니다.",
     "ESTP": "활동적이고 현실적이며, 문제 해결에 즉각적으로 대응합니다.",
     "ESFP": "사교적이고 활기차며, 즐거움을 추구하고 다른 사람들과 함께하는 것을 좋아합니다.",
-    "
+    "ENFP": "열정적이고 창의적이며, 새로운
