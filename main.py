@@ -4,7 +4,7 @@ import pandas as pd
 # 페이지 기본 설정
 st.set_page_config(
     page_title="MBTI 진로 추천 서비스 🧭",
-    page_icon="✨", # 페이지 아이콘으로 반짝이는 이모지 추가
+    page_icon="✨",
     layout="wide"
 )
 
@@ -12,11 +12,11 @@ st.set_page_config(
 st.markdown("""
 <style>
     .main {
-        background-color: #f8f9fa; /* 아주 밝은 회색 */
-        color: #212529; /* 거의 검정에 가까운 진한 회색 텍스트 */
+        background-color: #f8f9fa;
+        color: #212529;
     }
     .stButton button {
-        background-color: #343a40; /* 진한 회색 버튼 */
+        background-color: #343a40;
         color: white;
         border-radius: 5px;
         padding: 10px 20px;
@@ -24,9 +24,9 @@ st.markdown("""
         transition: background-color 0.3s;
     }
     .stButton button:hover {
-        background-color: #495057; /* 마우스 오버 시 조금 더 밝은 회색 */
+        background-color: #495057;
     }
-    .stSelectbox label, .stRadio label {
+    .stTextInput label, .stRadio label {
         color: #343a40;
         font-weight: bold;
     }
@@ -34,11 +34,11 @@ st.markdown("""
         color: #212529;
     }
     .result-card {
-        background-color: #e9ecef; /* 약간 밝은 회색 카드 배경 */
+        background-color: #e9ecef;
         padding: 20px;
         border-radius: 10px;
         margin-bottom: 20px;
-        box-shadow: 2px 2px 8px rgba(0,0,0,0.1); /* 은은한 그림자 */
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
     }
     .stAlert {
         border-radius: 5px;
@@ -47,7 +47,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 제목
-st.title("MBTI 기반 진로 추천 서비스 🎯") # 목표를 나타내는 이모지 추가
+st.title("MBTI 기반 진로 추천 서비스 🎯")
 st.markdown("---")
 
 # MBTI 유형별 추천 직업 데이터
@@ -82,41 +82,4 @@ mbti_descriptions = {
     "INTP": "논리적이고 창의적인 사고를 하며, 이론적인 개념에 관심이 많습니다.",
     "ESTP": "활동적이고 현실적이며, 문제 해결에 즉각적으로 대응합니다.",
     "ESFP": "사교적이고 활기차며, 즐거움을 추구하고 다른 사람들과 함께하는 것을 좋아합니다.",
-    "ENFP": "열정적이고 창의적이며, 새로운 가능성과 아이디어에 관심이 많습니다.",
-    "ENTP": "혁신적이고 독창적이며, 새로운 아이디어를 탐구하는 것을 좋아합니다.",
-    "ESTJ": "체계적이고 실용적이며, 조직을 이끌고 관리하는 데 탁월합니다.",
-    "ESFJ": "사교적이고 친화적이며, 다른 사람과의 조화를 중요하게 생각합니다.",
-    "ENFJ": "다른 사람의 성장을 돕고 동기를 부여하는 데 뛰어난 리더형입니다.",
-    "ENTJ": "리더십이 강하고 추진력이 뛰어나며, 목표 달성을 위해 전략적으로 행동합니다."
-}
-
-# 사용자 입력
-st.subheader("🧐 당신의 MBTI 유형을 선택해 주세요.") # 질문에 이모지 추가
-mbti_type = st.selectbox(
-    "나의 MBTI는...?",
-    ("선택하세요", *sorted(list(mbti_jobs.keys()))) # '선택하세요' 옵션 추가
-)
-
-if mbti_type != "선택하세요":
-    st.markdown("---")
-    st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
-    st.write(f"### 🤝 선택하신 MBTI 유형은 **{mbti_type}** 입니다!") # 이모지 추가
-    
-    # MBTI 설명 표시 (확장 가능한 형태로)
-    with st.expander(f"**{mbti_type} 유형에 대해 알아볼까요?**"):
-        st.write(mbti_descriptions[mbti_type])
-        
-    st.write("### 🌟 추천하는 직업 분야는 다음과 같아요:") # 이모지 추가
-    jobs = mbti_jobs[mbti_type]
-    for i, job in enumerate(jobs):
-        st.write(f"- {job}") # 각 직업 앞에 기호 추가 (이모지 대신 하이픈 사용)
-        
-    st.markdown("</div>", unsafe_allow_html=True)
-    
-    st.markdown("---")
-    st.success("✨ 윤지님, 당신의 멋진 미래를 응원합니다! ✨") # 응원 메시지에 이모지 추가
-else:
-    st.info("⬆️ 위에 있는 드롭다운 메뉴에서 MBTI 유형을 선택해 주세요.") # 안내 메시지
-
-st.markdown("---")
-st.caption("본 서비스는 MBTI 특성과 일반적인 직업 매칭을 기반으로 한 진로 교육용 예시입니다. 개인의 적성과 흥미에 따라 결과는 달라질 수 있습니다.")
+    "
