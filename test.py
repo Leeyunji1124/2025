@@ -4,7 +4,24 @@ import random
 import matplotlib.pyplot as plt
 import os
 
-# --- 함수 정의 (오류 수정을 위해 위로 이동) ---
+# --- Matplotlib 한글 폰트 설정 (오류 수정 부분) ---
+from matplotlib import font_manager, rc
+
+# 시스템에 한글 폰트가 있는지 확인
+font_path = ""
+for font in font_manager.findSystemFonts(fontpaths=None, fontext='ttf'):
+    if 'Nanum' in font or 'malgun' in font:
+        font_path = font
+        break
+
+if font_path:
+    font_name = font_manager.FontProperties(fname=font_path).get_name()
+    rc('font', family=font_name)
+else:
+    st.warning("경고: 시스템에 한글 폰트(나눔고딕 등)가 없어 그래프의 한글이 깨질 수 있습니다.")
+    st.info("해결 방법: 폰트를 설치하거나, Streamlit 앱을 배포하는 환경에 맞는 폰트를 설정해야 합니다.")
+
+# --- 함수 정의 ---
 def get_scientific_explanation(secret_var):
     explanations = {
         'light': "빛은 광합성에 필요한 에너지를 제공합니다. 빛의 세기가 증가하면 광합성 속도가 빨라져 식물 성장이 촉진되지만, 너무 강한 빛은 오히려 성장을 저해할 수 있습니다. 최적점은 5단계입니다.",
