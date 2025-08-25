@@ -67,6 +67,26 @@ if st.button("🔬 실험 시작"):
 
     st.success(f"실험 완료! 이번 실험에서 식물은 **{current_growth}** 만큼 성장했습니다.")
 
+    # --- 식물 성장 그림 표시 (추가된 부분) ---
+    st.subheader("🌱 식물 성장 모습")
+    if current_growth < 25:
+        image_path = "plant_stage1.png" # 식물 성장 초기 단계 이미지
+        st.write("🌱 아직 성장이 미미합니다.")
+    elif current_growth < 50:
+        image_path = "plant_stage2.png" # 식물 성장 중간 단계 이미지
+        st.write("🌿 조금씩 자라고 있네요!")
+    elif current_growth < 75:
+        image_path = "plant_stage3.png" # 식물 성장 활발한 단계 이미지
+        st.write("🌳 제법 많이 자랐어요!")
+    else:
+        image_path = "plant_stage4.png" # 식물 최대 성장 단계 이미지
+        st.write("🌲 매우 건강하게 잘 자랐습니다!")
+
+    try:
+        st.image(image_path, caption=f"현재 성장률: {current_growth}", use_column_width=True)
+    except FileNotFoundError:
+        st.error("이미지 파일을 찾을 수 없습니다! 스크립트와 같은 폴더에 이미지 파일을 넣어주세요.")
+
 # --- 실험 기록 및 시각화 ---
 if not st.session_state.experiment_log.empty:
     st.subheader("📚 실험 기록")
@@ -146,4 +166,5 @@ def get_hint(secret_var):
         'water': "가로축이 '물의 양'인 그래프를 보면 다른 변인들과는 다른 뚜렷한 경향을 보일 거예요.",
         'co2': "이산화탄소 농도에 따른 성장률 변화가 가장 뚜렷하게 나타날 겁니다. 해당 그래프를 다시 확인해 보세요."
     }
+    return hints.get(secret_var, "다시 실험을 진행하며 데이터를 더 모아보세요.")
     return hints.get(secret_var, "다시 실험을 진행하며 데이터를 더 모아보세요.")
