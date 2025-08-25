@@ -68,26 +68,16 @@ if st.button("🔬 실험 시작"):
 
     st.success(f"실험 완료! 이번 실험에서 식물은 **{current_growth}** 만큼 성장했습니다.")
 
-    # --- 식물 성장 그림 표시 (추가된 부분) ---
+    # --- 식물 성장 텍스트 표시 (이미지 대체 부분) ---
     st.subheader("🌱 식물 성장 모습")
     if current_growth < 25:
-        image_path = "plant_stage1.png" # 식물 성장 초기 단계 이미지
-        growth_text = "🌱 아직 성장이 미미합니다."
+        st.write("🌱 아직 성장이 미미합니다.")
     elif current_growth < 50:
-        image_path = "plant_stage2.png" # 식물 성장 중간 단계 이미지
-        growth_text = "🌿 조금씩 자라고 있네요!"
+        st.write("🌿 조금씩 자라고 있네요!")
     elif current_growth < 75:
-        image_path = "plant_stage3.png" # 식물 성장 활발한 단계 이미지
-        growth_text = "🌳 제법 많이 자랐어요!"
+        st.write("🌳 제법 많이 자랐어요!")
     else:
-        image_path = "plant_stage4.png" # 식물 최대 성장 단계 이미지
-        growth_text = "🌲 매우 건강하게 잘 자랐습니다!"
-
-    st.write(growth_text)
-    if os.path.exists(image_path):
-        st.image(image_path, caption=f"현재 성장률: {current_growth}", use_column_width=True)
-    else:
-        st.error(f"이미지 파일 '{image_path}'을 찾을 수 없습니다! 스크립트와 같은 폴더에 이미지 파일을 넣어주세요.")
+        st.write("🌲 매우 건강하게 잘 자랐습니다!")
 
 # --- 실험 기록 및 시각화 ---
 if not st.session_state.experiment_log.empty:
