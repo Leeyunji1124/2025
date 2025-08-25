@@ -6,18 +6,19 @@ import os
 
 # --- 페이지 설정 ---
 st.set_page_config(
-    page_title="광합성 탐정: 비밀 변인을 찾아라!",
+    page_title="광합성 탐정: 100% 성장 지점을 찾아라!",
     layout="wide"
 )
 
-st.title("🌱 광합성 탐정: 비밀 변인을 찾아라!")
-st.write("여러분의 임무는 식물의 성장에 가장 큰 영향을 미치는 '비밀 변인'을 찾아내는 것입니다. 빛, 물, 이산화탄소 중 하나를 조작하여 실험을 반복하고, 데이터를 분석해 보세요!")
+st.title("🌱 광합성 탐정: 100% 성장 지점을 찾아라!")
+st.write("여러분의 임무는 식물이 **가장 건강하게 자랄 수 있는 최적의 조건**을 찾아내는 것입니다. 실험을 반복하여 빛, 물, 이산화탄소 중 어떤 변인이 가장 큰 영향을 주는지, 그리고 그 변인의 **100% 성장 지점**은 몇인지 찾아보세요!")
 
 # --- 세션 상태 초기화 ---
 if 'secret_variable' not in st.session_state:
     st.session_state.secret_variable = random.choice(['light', 'water', 'co2'])
     st.session_state.experiment_log = pd.DataFrame(columns=['빛', '물', 'CO2', '성장률'])
     st.session_state.max_growth = random.uniform(50, 100) # 최대 성장률을 무작위로 설정
+    st.session_state.optimal_value = 50 # 100% 성장 지점은 50으로 고정
 
 # --- UI 요소 ---
 st.subheader("🧪 실험 조건 설정")
@@ -118,12 +119,22 @@ if not st.session_state.experiment_log.empty:
     st.pyplot(fig)
 
 
-# --- 정답 확인 ---
+# --- 정답 확인 (목표 변경에 맞춰 수정된 부분) ---
 st.subheader("🕵️‍♂️ 추론 및 정답 확인")
-guess_variable = st.radio(
-    "어떤 변인이 식물의 성장에 가장 큰 영향을 미쳤을까요?",
-    ['빛의 세기', '물의 양', '이산화탄소 농도']
-)
+col_guess1, col_guess2 = st.columns(2)
+
+with col_guess1:
+    guess_variable = st.radio(
+        "어떤 변인이 비밀 변인일까요?",
+        ['빛의 세기', '물의 양', '이산화탄소 농도']
+    )
+
+with col_guess2:
+    guess_value = st.number_input(
+        "그 변인의 100% 성장 지점은 몇일까요?",
+        min_value=0, max_value=100, value=50, step=1
+    )
+
 
 if st.button("정답 확인!"):
     secret_var_korean = {
@@ -132,13 +143,19 @@ if st.button("정답 확인!"):
         'co2': '이산화탄소 농도'
     }
 
-    if guess_variable == secret_var_korean.get(st.session_state.secret_variable):
+    is_variable_correct = (guess_variable == secret_var_korean.get(st.session_state.secret_variable))
+    is_value_correct = (guess_value == st.session_state.optimal_value)
+
+    if is_variable_correct and is_value_correct:
         st.balloons()
-        st.success(f"🎉 **정답입니다!** 비밀 변인은 바로 **{guess_variable}**였습니다!")
+        st.success(f"🎉 **정답입니다!** 비밀 변인은 **{guess_variable}**였고, 최적의 값은 **{st.session_state.optimal_value}**였습니다!")
         st.write(f"**과학적 설명:** {get_scientific_explanation(st.session_state.secret_variable)}")
+    elif is_variable_correct and not is_value_correct:
+        st.error(f"❌ 비밀 변인은 맞췄지만, 최적의 값은 틀렸네요. 그래프에서 성장률이 가장 높은 지점을 찾아보세요!")
+    elif not is_variable_correct and is_value_correct:
+        st.error(f"❌ 값은 맞췄지만, 비밀 변인은 틀렸네요. 어떤 변인이 성장률에 가장 큰 영향을 주었는지 다시 분석해 보세요.")
     else:
         st.error(f"❌ 아쉽네요. 다시 한번 실험 결과를 분석해 보세요.")
-        st.info(f"힌트: {get_hint(st.session_state.secret_variable)}")
 
     st.write("---")
     st.write("새로운 게임을 시작하려면 앱을 새로고침(F5)하세요.")
@@ -146,9 +163,9 @@ if st.button("정답 확인!"):
 
 def get_scientific_explanation(secret_var):
     explanations = {
-        'light': "빛은 광합성에 필요한 에너지를 제공합니다. 빛의 세기가 증가하면 광합성 속도가 빨라져 식물 성장이 촉진되지만, 너무 강한 빛은 오히려 성장을 저해할 수 있습니다.",
-        'water': "물은 광합성 반응의 필수적인 재료입니다. 물이 충분해야 이산화탄소가 잎으로 흡수되고, 물 분해가 일어나 에너지를 얻을 수 있습니다.",
-        'co2': "이산화탄소는 광합성을 통해 포도당을 만드는 데 사용되는 주요 원료입니다. 이산화탄소 농도가 높을수록 광합성 속도가 빨라집니다."
+        'light': "빛은 광합성에 필요한 에너지를 제공합니다. 빛의 세기가 증가하면 광합성 속도가 빨라져 식물 성장이 촉진되지만, 너무 강한 빛은 오히려 성장을 저해할 수 있습니다. 50%가 최적점이죠.",
+        'water': "물은 광합성 반응의 필수적인 재료입니다. 물이 충분해야 이산화탄소가 잎으로 흡수되고, 물 분해가 일어나 에너지를 얻을 수 있습니다. 물의 양이 50mL일 때 최적의 성장을 보입니다.",
+        'co2': "이산화탄소는 광합성을 통해 포도당을 만드는 데 사용되는 주요 원료입니다. 이산화탄소 농도가 높을수록 광합성 속도가 빨라집니다. 50ppm일 때 가장 효율적입니다."
     }
     return explanations.get(secret_var, "알 수 없는 변인입니다.")
 
