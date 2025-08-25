@@ -10,16 +10,17 @@ from matplotlib import font_manager, rc
 # 시스템에 한글 폰트가 있는지 확인
 font_path = ""
 for font in font_manager.findSystemFonts(fontpaths=None, fontext='ttf'):
-    if 'Nanum' in font or 'malgun' in font:
+    if 'Nanum' in font.lower() or 'malgun' in font.lower():
         font_path = font
         break
 
 if font_path:
     font_name = font_manager.FontProperties(fname=font_path).get_name()
     rc('font', family=font_name)
+    plt.rcParams['axes.unicode_minus'] = False # 마이너스 기호 깨짐 방지
 else:
-    st.warning("경고: 시스템에 한글 폰트(나눔고딕 등)가 없어 그래프의 한글이 깨질 수 있습니다.")
-    st.info("해결 방법: 폰트를 설치하거나, Streamlit 앱을 배포하는 환경에 맞는 폰트를 설정해야 합니다.")
+    st.warning("경고: 시스템에 한글 폰트(나눔고딕, 맑은 고딕 등)를 찾을 수 없습니다. 그래프의 한글이 깨질 수 있습니다.")
+    st.info("해결 방법: 앱을 실행하는 환경에 'fonts-nanum' 패키지를 설치하거나, 스크립트와 같은 폴더에 'packages.txt' 파일을 만들고 'fonts-nanum'이라고 입력해 보세요.")
 
 # --- 함수 정의 ---
 def get_scientific_explanation(secret_var):
@@ -59,16 +60,15 @@ st.subheader("🧪 실험 조건 설정")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    light_level = st.slider("☀️ 빛의 세기 (단계)", 1, 10, 5) # 슬라이더 범위 변경
+    light_level = st.slider("☀️ 빛의 세기 (단계)", 1, 10, 5)
 with col2:
-    water_level = st.slider("💧 물의 양 (단계)", 1, 10, 5) # 슬라이더 범위 변경
+    water_level = st.slider("💧 물의 양 (단계)", 1, 10, 5)
 with col3:
-    co2_level = st.slider("💨 이산화탄소 농도 (단계)", 1, 10, 5) # 슬라이더 범위 변경
+    co2_level = st.slider("💨 이산화탄소 농도 (단계)", 1, 10, 5)
 
 # --- 실험 결과 계산 함수 ---
 def calculate_growth(light, water, co2, secret_var, max_growth):
     growth_rate = 0
-    # 성장률 계산식 변경 (최적점이 5가 되도록)
     if secret_var == 'light':
         growth_rate = -4 * (light - 5)**2 + 100
     elif secret_var == 'water':
@@ -76,10 +76,8 @@ def calculate_growth(light, water, co2, secret_var, max_growth):
     elif secret_var == 'co2':
         growth_rate = -4 * (co2 - 5)**2 + 100
 
-    # 0보다 작거나 100보다 큰 값은 조정
     growth_rate = max(0, min(100, growth_rate))
 
-    # 다른 변수들의 영향 (노이즈) 추가
     noise_factor = 2
     if secret_var != 'light':
         growth_rate -= noise_factor * abs(light - 5)
@@ -88,7 +86,6 @@ def calculate_growth(light, water, co2, secret_var, max_growth):
     if secret_var != 'co2':
         growth_rate -= noise_factor * abs(co2 - 5)
 
-    # 최종 성장률 계산
     final_growth = (growth_rate / 100) * max_growth
     final_growth = max(0, final_growth)
     return round(final_growth, 2)
@@ -101,7 +98,6 @@ if st.button("🔬 실험 시작"):
 
     st.success(f"실험 완료! 이번 실험에서 식물은 **{current_growth}** 만큼 성장했습니다.")
 
-    # --- 식물 성장 텍스트 표시 (이미지 대체 부분) ---
     st.subheader("🌱 식물 성장 모습")
     if current_growth < 25:
         st.write("🌱 아직 성장이 미미합니다.")
@@ -126,7 +122,6 @@ if not st.session_state.experiment_log.empty:
     ax.grid(True)
     st.pyplot(fig)
 
-    # 각 변수와 성장률의 상관관계 그래프
     st.subheader("📊 변인과 성장률의 관계")
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -150,8 +145,7 @@ if not st.session_state.experiment_log.empty:
 
     st.pyplot(fig)
 
-
-# --- 정답 확인 (목표 변경에 맞춰 수정된 부분) ---
+# --- 정답 확인 ---
 st.subheader("🕵️‍♂️ 추론 및 정답 확인")
 col_guess1, col_guess2 = st.columns(2)
 
@@ -164,9 +158,8 @@ with col_guess1:
 with col_guess2:
     guess_value = st.number_input(
         "그 변인의 100% 성장 지점은 몇일까요?",
-        min_value=1, max_value=10, value=5, step=1 # 입력 범위 변경
+        min_value=1, max_value=10, value=5, step=1
     )
-
 
 if st.button("정답 확인!"):
     secret_var_korean = {
