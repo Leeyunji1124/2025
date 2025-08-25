@@ -11,50 +11,48 @@ st.set_page_config(
 )
 
 st.title("🌱 광합성 탐정: 100% 성장 지점을 찾아라!")
-st.write("여러분의 임무는 식물이 **가장 건강하게 자랄 수 있는 최적의 조건**을 찾아내는 것입니다. 실험을 반복하여 빛, 물, 이산화탄소 중 어떤 변인이 가장 큰 영향을 주는지, 그리고 그 변인의 **100% 성장 지점**은 몇인지 찾아보세요!")
+st.write("여러분의 임무는 식물이 **가장 건강하게 자랄 수 있는 최적의 조건**을 찾아내는 것입니다. 실험을 반복하여 빛, 물, 이산화탄소 중 어떤 변인이 가장 큰 영향을 주는지, 그리고 그 변인의 **100% 성장 지점**은 몇인지 찾아보세요! (최적점은 1부터 10 사이의 정수입니다)")
 
 # --- 세션 상태 초기화 ---
 if 'secret_variable' not in st.session_state:
     st.session_state.secret_variable = random.choice(['light', 'water', 'co2'])
     st.session_state.experiment_log = pd.DataFrame(columns=['빛', '물', 'CO2', '성장률'])
     st.session_state.max_growth = random.uniform(50, 100) # 최대 성장률을 무작위로 설정
-    st.session_state.optimal_value = 50 # 100% 성장 지점은 50으로 고정
+    st.session_state.optimal_value = 5 # 100% 성장 지점을 5로 변경
 
 # --- UI 요소 ---
 st.subheader("🧪 실험 조건 설정")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    light_level = st.slider("☀️ 빛의 세기 (%)", 0, 100, 50)
+    light_level = st.slider("☀️ 빛의 세기 (단계)", 1, 10, 5) # 슬라이더 범위 변경
 with col2:
-    water_level = st.slider("💧 물의 양 (mL)", 0, 100, 50)
+    water_level = st.slider("💧 물의 양 (단계)", 1, 10, 5) # 슬라이더 범위 변경
 with col3:
-    co2_level = st.slider("💨 이산화탄소 농도 (ppm)", 0, 100, 50)
+    co2_level = st.slider("💨 이산화탄소 농도 (단계)", 1, 10, 5) # 슬라이더 범위 변경
 
 # --- 실험 결과 계산 함수 ---
 def calculate_growth(light, water, co2, secret_var, max_growth):
     growth_rate = 0
+    # 성장률 계산식 변경 (최적점이 5가 되도록)
     if secret_var == 'light':
-        # 빛의 세기에 따라 성장률 변화 (2차 함수 형태)
-        growth_rate = -0.01 * (light - 50)**2 + 100
+        growth_rate = -4 * (light - 5)**2 + 100
     elif secret_var == 'water':
-        # 물의 양에 따라 성장률 변화 (2차 함수 형태)
-        growth_rate = -0.01 * (water - 50)**2 + 100
+        growth_rate = -4 * (water - 5)**2 + 100
     elif secret_var == 'co2':
-        # CO2 농도에 따라 성장률 변화 (2차 함수 형태)
-        growth_rate = -0.01 * (co2 - 50)**2 + 100
+        growth_rate = -4 * (co2 - 5)**2 + 100
 
     # 0보다 작거나 100보다 큰 값은 조정
     growth_rate = max(0, min(100, growth_rate))
 
     # 다른 변수들의 영향 (노이즈) 추가
-    noise_factor = 0.5
+    noise_factor = 2
     if secret_var != 'light':
-        growth_rate -= noise_factor * abs(light - 50) / 5
+        growth_rate -= noise_factor * abs(light - 5)
     if secret_var != 'water':
-        growth_rate -= noise_factor * abs(water - 50) / 5
+        growth_rate -= noise_factor * abs(water - 5)
     if secret_var != 'co2':
-        growth_rate -= noise_factor * abs(co2 - 50) / 5
+        growth_rate -= noise_factor * abs(co2 - 5)
 
     # 최종 성장률 계산
     final_growth = (growth_rate / 100) * max_growth
@@ -132,7 +130,7 @@ with col_guess1:
 with col_guess2:
     guess_value = st.number_input(
         "그 변인의 100% 성장 지점은 몇일까요?",
-        min_value=0, max_value=100, value=50, step=1
+        min_value=1, max_value=10, value=5, step=1 # 입력 범위 변경
     )
 
 
@@ -163,9 +161,9 @@ if st.button("정답 확인!"):
 
 def get_scientific_explanation(secret_var):
     explanations = {
-        'light': "빛은 광합성에 필요한 에너지를 제공합니다. 빛의 세기가 증가하면 광합성 속도가 빨라져 식물 성장이 촉진되지만, 너무 강한 빛은 오히려 성장을 저해할 수 있습니다. 50%가 최적점이죠.",
-        'water': "물은 광합성 반응의 필수적인 재료입니다. 물이 충분해야 이산화탄소가 잎으로 흡수되고, 물 분해가 일어나 에너지를 얻을 수 있습니다. 물의 양이 50mL일 때 최적의 성장을 보입니다.",
-        'co2': "이산화탄소는 광합성을 통해 포도당을 만드는 데 사용되는 주요 원료입니다. 이산화탄소 농도가 높을수록 광합성 속도가 빨라집니다. 50ppm일 때 가장 효율적입니다."
+        'light': "빛은 광합성에 필요한 에너지를 제공합니다. 빛의 세기가 증가하면 광합성 속도가 빨라져 식물 성장이 촉진되지만, 너무 강한 빛은 오히려 성장을 저해할 수 있습니다. 최적점은 5단계입니다.",
+        'water': "물은 광합성 반응의 필수적인 재료입니다. 물이 충분해야 이산화탄소가 잎으로 흡수되고, 물 분해가 일어나 에너지를 얻을 수 있습니다. 물의 양이 5단계일 때 최적의 성장을 보입니다.",
+        'co2': "이산화탄소는 광합성을 통해 포도당을 만드는 데 사용되는 주요 원료입니다. 이산화탄소 농도가 높을수록 광합성 속도가 빨라집니다. 5단계일 때 가장 효율적입니다."
     }
     return explanations.get(secret_var, "알 수 없는 변인입니다.")
 
